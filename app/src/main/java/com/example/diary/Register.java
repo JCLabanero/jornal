@@ -24,7 +24,7 @@ public class Register extends AppCompatActivity {
     TextView btnTxtSignUp;
     Button buttonReg;
     ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
     @Override
     public void onStart() {
         super.onStart();

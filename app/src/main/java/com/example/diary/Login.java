@@ -3,6 +3,7 @@ package com.example.diary;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,14 +25,15 @@ public class Login extends AppCompatActivity {
     TextView btnTxtSignUp;
     Button buttonLog;
     ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
+    Context context;
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        init();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
             finish();
         }
@@ -40,17 +42,12 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        editTextEmail = findViewById(R.id.email);
-        ediTextPassword = findViewById(R.id.password);
-        buttonLog = findViewById(R.id.btn_login);
-        progressBar = findViewById(R.id.progress_horizontal_1);
-        btnTxtSignUp = findViewById(R.id.SignUp);
-
+        init();
         btnTxtSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Register.class);
-                startActivity(intent);
+                Intent intentCheckIfLogedIn = new Intent(context, Register.class);
+                startActivity(intentCheckIfLogedIn);
                 finish();
             }
         });
@@ -62,30 +59,39 @@ public class Login extends AppCompatActivity {
                 password = String.valueOf(ediTextPassword.getText());
                 progressBar.setVisibility(View.VISIBLE);
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(Login.this, "Ema il empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Email empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(Login.this, "Password empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Password empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mAuth.signInWithEmailAndPassword(email, password)
+                mAuth.signInWithEmailAndPassword(email,password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(Login.this, "Authentication success", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(Login.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                           @Override
+                           public void onComplete(@NonNull Task<AuthResult> task) {
+                               progressBar.setVisibility(View.GONE);
+                               if(task.isSuccessful()){
+                                   Toast.makeText(getApplicationContext(), "Authentication success", Toast.LENGTH_SHORT).show();
+                                   Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                   startActivity(intent);
+                                   finish();
+                               }else{
+                                   Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                               }
+                           }
+                       }
+                );
             }
         });
+    }
+    private void init(){
+        context = this;
+        editTextEmail = findViewById(R.id.email_login);
+        ediTextPassword = findViewById(R.id.password_login);
+        buttonLog = findViewById(R.id.btn_login);
+        progressBar = findViewById(R.id.progress_horizontal_1);
+        btnTxtSignUp = findViewById(R.id.SignUp);
+        mAuth = FirebaseAuth.getInstance();
     }
 }

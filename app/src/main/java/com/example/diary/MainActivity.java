@@ -2,6 +2,7 @@ package com.example.diary;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogOut;
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,8 +26,9 @@ public class MainActivity extends AppCompatActivity {
         btnLogOut = findViewById(R.id.Logout);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
+        context = this;
         if(user==null){
-            Intent intent = new Intent(getApplicationContext(), Login.class);
+            Intent intent = new Intent(context, Login.class);
             startActivity(intent);
             finish();
         } else {
