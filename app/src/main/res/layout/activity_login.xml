@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="bottom"
         android:orientation="horizontal">
         <TextView
@@ -52,6 +52,23 @@
         android:text="@string/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/btn_loginGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_margin="8dp"
+            app:srcCompat="@drawable/ic_facebook" />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
