@@ -50,10 +50,6 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseAuth mAuth;
     Context context;
-    private SignInClient oneTapClient;
-    private BeginSignInRequest signUpRequest;
-    private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
-    private boolean showOneTapUI = true;
     @Override
     public void onStart() {
         super.onStart();
@@ -78,21 +74,11 @@ public class Login extends AppCompatActivity {
         btnTxtSignUp = findViewById(R.id.SignUp);
         mAuth = FirebaseAuth.getInstance();
 
-
-        oneTapClient = Identity.getSignInClient(context);
-        oneTapClient = Identity.getSignInClient(this);
-        signUpRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        .setServerClientId(getString(R.string.web_client_id))
-                        .setFilterByAuthorizedAccounts(false)
-                        .build())
-                .build();
         btnTxtSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentCheckIfLogedIn = new Intent(context, Register.class);
-                startActivity(intentCheckIfLogedIn);
+                Intent intentCheckIfLogIn = new Intent(context, Register.class);
+                startActivity(intentCheckIfLogIn);
                 finish();
             }
         });
@@ -105,9 +91,11 @@ public class Login extends AppCompatActivity {
                 password = String.valueOf(ediTextPassword.getText());
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(context, "Email empty", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(context, "Password empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -129,56 +117,10 @@ public class Login extends AppCompatActivity {
                 );
             }
         });
-        ActivityResultLauncher<IntentSenderRequest> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if(result.getResultCode() == Activity.RESULT_OK){
-                    try {
-                        SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
-                        String idToken = credential.getGoogleIdToken();
-                        if(idToken!=null){
-                            String email = credential.getId();
-//                            AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
-                            Toast.makeText(Login.this, "."+email, Toast.LENGTH_SHORT).show();
-//                            mAuth.signInWithCredential(firebaseCredential)
-//                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                                            if (task.isSuccessful()) {
-//                                                // Sign in success, update UI with the signed-in user's information
-//                                                Toast.makeText(Login.this, "Email: " + email, Toast.LENGTH_SHORT).show();
-//                                                FirebaseUser user = mAuth.getCurrentUser();
-//                                            } else {
-//                                                // If sign in fails, display a message to the user.
-//                                                Toast.makeText(Login.this, "Failed to authenticate!", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        }
-//                                    });
-                        }
-                    } catch (ApiException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         buttonLogGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                oneTapClient.beginSignIn(signUpRequest)
-                        .addOnSuccessListener(new OnSuccessListener<BeginSignInResult>() {
-                            @Override
-                            public void onSuccess(BeginSignInResult result) {
-                                IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
-                                activityResultLauncher.launch(intentSenderRequest);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d("TAG", e.getLocalizedMessage());
-                                Toast.makeText(context, "FAILED!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+
             }
         });
     }

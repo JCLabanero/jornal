@@ -23,10 +23,10 @@ import com.google.firebase.auth.FirebaseUser;
 public class Register extends AppCompatActivity {
     TextInputEditText editTextEmail, ediTextPassword;
     TextView btnTxtSignUp;
-    ImageView btnImageSignUp;
+//    ImageView btnImageSignUp;
     Button buttonReg;
     ProgressBar progressBar;
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     @Override
     public void onStart() {
         super.onStart();
@@ -90,10 +90,10 @@ public class Register extends AppCompatActivity {
                         });
             }
         });
-        btnImageSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+//        btnImageSignUp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//            }
+//        });
     }
 }
