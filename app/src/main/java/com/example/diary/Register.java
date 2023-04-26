@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +23,13 @@ import com.google.firebase.auth.FirebaseUser;
 public class Register extends AppCompatActivity {
     TextInputEditText editTextEmail, ediTextPassword;
     TextView btnTxtSignUp;
+    ImageView btnImageSignUp;
     Button buttonReg;
     ProgressBar progressBar;
     FirebaseAuth mAuth;
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -87,6 +88,11 @@ public class Register extends AppCompatActivity {
                                 }
                             }
                         });
+            }
+        });
+        btnImageSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
             }
         });
     }
