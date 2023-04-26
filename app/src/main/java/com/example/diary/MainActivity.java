@@ -30,12 +30,17 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         context = this;
-        if(user==null){
+        if(user!=null){
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            boolean emailVerified = user.isEmailVerified();
+            String uid = user.getUid();
+
+            textDisplay.setText(email);
+        } else {
             Intent intent = new Intent(context, Login.class);
             startActivity(intent);
             finish();
-        } else {
-            textDisplay.setText(user.getEmail());
         }
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
