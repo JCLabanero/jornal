@@ -52,7 +52,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
         updateUI(currentUser);
     }
     @Override
@@ -128,6 +127,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 break;
             case R.id.btn_loginGoogle:
                 progressBar.setVisibility(View.GONE);
+                startActivity(new Intent(this,GoogleSignInActivity.class));
                 break;
             default:
         }
