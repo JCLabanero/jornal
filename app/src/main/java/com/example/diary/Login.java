@@ -6,13 +6,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,9 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -33,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,10 +38,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements View.OnClickListener{
     TextInputEditText editTextEmail, ediTextPassword;
     TextView btnTxtSignUp;
     ImageView buttonLogGoogle;
@@ -54,23 +48,12 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseAuth mAuth;
     Context context;
-
-    private static final String TAG = "GoogleActivity";
-    private static final int RC_SIGN_IN = 9001;
-
-    private GoogleSignInClient mGoogleSignInClient;
-
     @Override
     public void onStart() {
         super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null){
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        updateUI(currentUser);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +68,44 @@ public class Login extends AppCompatActivity {
         btnTxtSignUp = findViewById(R.id.SignUp);
         mAuth = FirebaseAuth.getInstance();
 
-        btnTxtSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intentCheckIfLogIn = new Intent(context, Register.class);
-                startActivity(intentCheckIfLogIn);
-            }
-        });
-        buttonLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
+        buttonLog.setOnClickListener(this);
+        buttonLogGoogle.setOnClickListener(this);
+        btnTxtSignUp.setOnClickListener(this);
+    }
+    public void signIn(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(getApplicationContext(), "Authentication success", Toast.LENGTH_SHORT).show();
+                            Log.d("TAG", "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(context, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                }
+        );
+    }
+    public void updateUI(FirebaseUser user){
+        if(user!=null){
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    @Override
+    public void onClick(View view){
+        progressBar.setVisibility(View.VISIBLE);
+        switch (view.getId()){
+            case R.id.btn_login:
                 String email, password;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(ediTextPassword.getText());
@@ -110,42 +120,16 @@ public class Login extends AppCompatActivity {
                     return;
                 }
                 signIn(email,password);
-            }
-        });
-        buttonLogGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
-    public void signIn(String email, String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(getApplicationContext(), "Authentication success", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(context, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-                    }
-                }
-        );
-    }
-    public void updateUI(FirebaseUser user){
-        if(user!=null){
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+                break;
+            case R.id.SignUp:
+                Intent intentCheckIfLogIn = new Intent(context, Register.class);
+                startActivity(intentCheckIfLogIn);
+                progressBar.setVisibility(View.GONE);
+                break;
+            case R.id.btn_loginGoogle:
+                progressBar.setVisibility(View.GONE);
+                break;
+            default:
         }
     }
 }
