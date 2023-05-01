@@ -17,13 +17,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView btnImageAdd;
     TextView textDisplay;
     Button btnLogOut;
+    FloatingActionButton btnAdd;
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
     Context context;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textDisplay = findViewById(R.id.TextDisplay);
         btnLogOut = findViewById(R.id.Logout);
-        btnImageAdd = findViewById(R.id.imageViewAdd);
+        btnAdd = findViewById(R.id.floating_action);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         context = this;
@@ -58,12 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        btnImageAdd.setOnClickListener(new View.OnClickListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateJournal.class);
                 startActivity(intent);
-                finish();
             }
         });
     }

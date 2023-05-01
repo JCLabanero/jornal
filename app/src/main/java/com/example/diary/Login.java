@@ -97,7 +97,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         if(user!=null){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
-            finish();
         }
     }
     @Override
@@ -105,6 +104,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         progressBar.setVisibility(View.VISIBLE);
         switch (view.getId()){
             case R.id.btn_login:
+                buttonLog.setVisibility(View.GONE);
                 String email, password;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(ediTextPassword.getText());

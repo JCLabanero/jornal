@@ -9,4 +9,7 @@
     <string name="sign_in">Sign in</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="web_client_id">79381489414-h4r1boamr9c6pavf71pi3rrc5tcdtr5a.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1234</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">56789</string>
 </resources>
