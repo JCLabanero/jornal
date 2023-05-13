@@ -24,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CreateJournal extends AppCompatActivity {
     ImageView btnReturn,btnSaveNote,btnLocation;
-    TextView header;
     EditText editTextTitle,editTextContent;
     Context c;
 
@@ -89,7 +88,7 @@ public class CreateJournal extends AppCompatActivity {
 
     void noteSaveToFirebasae(Note note){
         DocumentReference documentReference;
-        documentReference = getCollectionReferenceForNotes().document();
+        documentReference = Collection.getCollectionReferenceForNotes().document();
 
         documentReference.set(note).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -102,11 +101,5 @@ public class CreateJournal extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    static CollectionReference getCollectionReferenceForNotes(){
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        return FirebaseFirestore.getInstance().collection("notes")
-                .document(currentUser.getUid()).collection("my_notes");
     }
 }

@@ -123,7 +123,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
             case R.id.SignUp:
                 Intent intentCheckIfLogIn = new Intent(context, Register.class);
                 startActivity(intentCheckIfLogIn);
-                progressBar.setVisibility(View.GONE);
                 break;
             case R.id.btn_loginGoogle:
                 progressBar.setVisibility(View.GONE);
@@ -131,5 +130,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                 break;
             default:
         }
+        progressBar.setVisibility(View.GONE);
     }
 }
