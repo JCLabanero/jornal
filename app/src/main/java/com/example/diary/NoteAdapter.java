@@ -1,6 +1,7 @@
 package com.example.diary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,14 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         holder.timestampText.setText(Collection.timestampToString(model.timestamp));
         holder.contentText.setText(model.content);
         holder.titleText.setText(model.title);
+        holder.itemView.setOnClickListener((view -> {
+            Intent intent = new Intent(context,JournalControl.class);
+            intent.putExtra("title",model.title);
+            intent.putExtra("content",model.content);
+            String id = this.getSnapshots().getSnapshot(position).getId();
+            intent.putExtra("id",id);
+            context.startActivity(intent);
+        }));
     }
 
     @NonNull

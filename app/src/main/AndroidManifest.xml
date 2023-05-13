@@ -22,7 +22,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".CreateJournal"
+            android:name=".JournalControl"
             android:exported="false"
             android:theme="@style/Theme.Material3.Light.NoActionBar">
             <meta-data
