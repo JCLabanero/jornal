@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".JournalControl"
-    android:padding="8dp">
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
+    android:background="@color/tertiary">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="32dp"
@@ -15,8 +17,7 @@
             android:id="@+id/btnReturn"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            app:srcCompat="@drawable/ic_baseline_arrow_back_24"
-            />
+            app:srcCompat="@drawable/ic_baseline_arrow_back_24"/>
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -46,7 +47,7 @@
             android:layout_height="25dp"
             android:layout_marginStart="8dp"
             app:srcCompat="@drawable/ic_baseline_check_24"
-            />
+            app:tint="@color/purple_200" />
     </LinearLayout>
     <EditText
         android:id="@+id/editTextTitle"
