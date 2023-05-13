@@ -33,6 +33,14 @@
             app:srcCompat="@drawable/ic_baseline_location_on_24"
             />
         <ImageView
+            android:id="@+id/btnDeleteNote"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            app:srcCompat="@drawable/ic_baseline_delete_24"
+            android:visibility="gone"
+            />
+        <ImageView
             android:id="@+id/btnSaveNote"
             android:layout_width="25dp"
             android:layout_height="25dp"

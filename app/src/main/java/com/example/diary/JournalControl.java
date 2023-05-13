@@ -20,7 +20,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
 public class JournalControl extends AppCompatActivity {
-    ImageView btnReturn,btnSaveNote,btnLocation;
+    ImageView btnReturn,btnSaveNote,btnLocation,btnDeleteNote;
     EditText editTextTitle,editTextContent;
     TextView pageTitle;
     Context c;
@@ -35,6 +35,7 @@ public class JournalControl extends AppCompatActivity {
         btnSaveNote = findViewById(R.id.btnSaveNote);
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextContent = findViewById(R.id.editTextContent);
+        btnDeleteNote = findViewById(R.id.btnDeleteNote);
         pageTitle = findViewById(R.id.title);
         c = this;
         title = getIntent().getStringExtra("title");
@@ -46,8 +47,14 @@ public class JournalControl extends AppCompatActivity {
             editTextTitle.setText(title);
             editTextContent.setText(content);
             pageTitle.setText("Edit note");
+            btnDeleteNote.setVisibility(View.VISIBLE);
         }
-
+        btnDeleteNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noteDeleteFromFirebasae();
+            }
+        });
         btnSaveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,27 +67,24 @@ public class JournalControl extends AppCompatActivity {
                 String thisTitle = editTextTitle.getText().toString(),
                         thisContent = editTextContent.getText().toString();
                 AlertDialog.Builder builder = new AlertDialog.Builder(c);
-                if(isEditing) {
-                    if(!(thisTitle.equals(title)||!thisContent.equals(content))){
-                        builder.setMessage("Note changes will not get save, are you sure?")
-                                .setTitle("Confirm before leaving")
-                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        onBackPressed();
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //do nothing
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                    }
-                } else {
-                    if((!title.isEmpty()||!content.isEmpty())){
+                if((!thisTitle.equals(title) || !thisContent.equals(content))&&isEditing){
+                    builder.setMessage("Note changes will not get save, are you sure?")
+                            .setTitle("Confirm before leaving")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    onBackPressed();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                } else if((title==null||content==null)&&!isEditing){
                         builder.setMessage("Note will not get save, are you sure?")
                                 .setTitle("Confirm before leaving")
                                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -97,7 +101,8 @@ public class JournalControl extends AppCompatActivity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
-                    }
+                } else {
+                    onBackPressed();
                 }
             }
         });
@@ -115,6 +120,22 @@ public class JournalControl extends AppCompatActivity {
         note.setTimestamp(Timestamp.now());
 
         noteSaveToFirebasae(note);
+    }
+
+    void noteDeleteFromFirebasae(){
+        DocumentReference documentReference;
+        documentReference = Collection.getCollectionReferenceForNotes().document(id);
+        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(c, "Note Deleted Successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(c, "Failed to delete", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     void noteSaveToFirebasae(Note note){
