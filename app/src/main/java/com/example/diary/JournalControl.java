@@ -70,7 +70,6 @@ public class JournalControl extends AppCompatActivity {
             public void onClick(View view) {
                 linearLayout.setVisibility(View.VISIBLE);
                 if(linearLayout.getVisibility()==View.VISIBLE){
-                    getWeather();
                 }
             }
         });
@@ -133,7 +132,7 @@ public class JournalControl extends AppCompatActivity {
         });
     }
 
-    public void getWeather(){
+    public void getWeather(View view){
         String apiKey = "7d87458008572b7c952310829ff3788d";
         String cityKey = editLocationSearch.getText().toString();
         String url = String.format("https://api.openweathermap.org/data/2.5/weather?g=%s&appid=%s", cityKey, apiKey);

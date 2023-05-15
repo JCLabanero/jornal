@@ -32,6 +32,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             app:srcCompat="@drawable/ic_baseline_cloud_done_24"
+            android:onClick="getWeather"
             />
         <ImageView
             android:id="@+id/btnDeleteNote"
