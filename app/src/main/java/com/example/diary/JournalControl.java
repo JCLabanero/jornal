@@ -11,20 +11,31 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class JournalControl extends AppCompatActivity {
-    ImageView btnReturn,btnSaveNote,btnLocation,btnDeleteNote;
-    EditText editTextTitle,editTextContent;
-    TextView pageTitle;
+    ImageView btnReturn,btnSaveNote,btnWeather,btnDeleteNote;
+    EditText editTextTitle,editTextContent,editLocationSearch;
+    TextView pageTitle, locationDisplay;
     Context c;
     String title,content,id;
+    LinearLayout linearLayout;
     boolean isEditing = false;
 
     @Override
@@ -37,6 +48,10 @@ public class JournalControl extends AppCompatActivity {
         editTextContent = findViewById(R.id.editTextContent);
         btnDeleteNote = findViewById(R.id.btnDeleteNote);
         pageTitle = findViewById(R.id.title);
+        linearLayout = findViewById(R.id.weatherControl);
+        editLocationSearch = findViewById(R.id.editLocationSearch);
+        locationDisplay = findViewById(R.id.locationDisplay);
+        btnWeather = findViewById(R.id.btnWeather);
         c = this;
         title = getIntent().getStringExtra("title");
         content = getIntent().getStringExtra("content");
@@ -49,6 +64,16 @@ public class JournalControl extends AppCompatActivity {
             pageTitle.setText("Edit note");
             btnDeleteNote.setVisibility(View.VISIBLE);
         }
+        linearLayout.setVisibility(View.VISIBLE);
+        btnWeather.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linearLayout.setVisibility(View.VISIBLE);
+                if(linearLayout.getVisibility()==View.VISIBLE){
+                    getWeather();
+                }
+            }
+        });
         btnDeleteNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +131,34 @@ public class JournalControl extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void getWeather(){
+        String apiKey = "7d87458008572b7c952310829ff3788d";
+        String cityKey = editLocationSearch.getText().toString();
+        String url = String.format("https://api.openweathermap.org/data/2.5/weather?g=%s&appid=%s", cityKey, apiKey);
+//        String url2 = "https://api.openweathermap.org/data/2.5/weather?g="+cityKey+"&appid="+apiKey;
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        JsonObjectRequest requestjson = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject country = response.getJSONObject("sys");
+                    JSONObject currentWeather = response.getJSONObject("weather");
+                    String countryConverted = country.getString("country");
+                    String currentWeatherConverted = currentWeather.getString("description");
+                    locationDisplay.setText("Country: " + countryConverted +"\n"+"Weather: " + currentWeatherConverted);
+                } catch (JSONException e) {
+                    Toast.makeText(c, "error!" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(c, "error: 69 city not found!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(requestjson);
     }
     void noteSave(){
         String nodeTitle = editTextTitle.getText().toString();
